@@ -22,6 +22,7 @@ int main(){
 
     ll shortestCycle = 1e9;
     for (int i = 1 ; i <=n ;i++) {
+        
         vector<ll> dist(n+1, -1);
         vector<ll> parent(n+1, -1);
         queue<ll> q;
