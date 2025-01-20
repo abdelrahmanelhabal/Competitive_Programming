@@ -4,16 +4,16 @@ using namespace std;
 Find  lexicographically (largest Or smallest) topological sort 
 */
 int main() {
-ll n , m ; cin >> n >> m ;
-    vector<vector<ll>>adj(n+1); // 1-base 
-    vector<ll>inDeg(n+1,0);
+int n , m ; cin >> n >> m ;
+    vector<vector<int>>adj(n+1); // 1-base 
+    vector<int>inDeg(n+1,0);
 
     for (int i = 0 ; i< m ; i++) {
-        ll from ,to ; cin >>from >> to ;
+        int from ,to ; cin >>from >> to ;
         adj[from].push_back(to) ;
         inDeg[to]++ ;
     }
-    priority_queue<ll,vector<ll>,greater<ll>> q ;
+    priority_queue<int,vector<int>,greater<int>> q ;
     
     for (int i = 1; i <=n ;i++) {
         if (inDeg[i] == 0) {
@@ -21,9 +21,9 @@ ll n , m ; cin >> n >> m ;
         }
     }
 
-    vector<ll> ans;
+    vector<int> ans;
     while (!q.empty()) {
-        ll node = q.top(); q.pop();
+        int node = q.top(); q.pop();
         ans.push_back(node);
         for (auto child : adj[node]) {
             inDeg[child]-- ;
