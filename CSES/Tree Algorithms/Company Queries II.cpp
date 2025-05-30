@@ -1,5 +1,12 @@
-int const Log = 40 , N = 3e5+5;
-int n , q  , root = 1 , parent[N] ,up[N][Log]  , depth[N];
+#include <bits/stdc++.h>
+using namespace std;
+#define all(x) begin(x), end(x)
+#define str string
+#define int long long
+#define ld long double
+#define endl '\n'
+int const Log = 30 , N = 2e5+5;
+int n , q , root = 1 , parent[N] ,up[N][Log] , depth[N];
 vector<int>adj[N] ;
 void dfs(int node , int parent) {
     for (auto child : adj[node]) {
@@ -42,4 +49,30 @@ int lca(int u , int v) {
 int dis(int u , int v) {
     int l = lca(u,v);
     return depth[u] + depth[v] - 2 * depth[l];
+}
+
+void solve() {
+cin >> n >> q ;
+    for (int i = 2 ; i <=n ; i++) {
+        int par ; cin >> par ;
+        adj[par].emplace_back(i) ;
+        adj[i].emplace_back(par) ;
+    }
+    build() ;
+    while (q--) {
+        int u, v ; cin >> u >> v ;
+        cout << lca(u,v) << endl ;
+    }
+
+}
+
+signed main() {
+    #ifndef ONLINE_JUDGE
+         freopen("input.txt", "r", stdin);
+       freopen("output.txt", "w", stdout);
+     #endif
+    ios_base::sync_with_stdio(false), cin.tie(nullptr), cout.tie(nullptr);
+    int tc =1;  //cin >> tc ;
+    while (tc--) solve();
+    return 0;
 }
