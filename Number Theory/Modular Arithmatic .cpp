@@ -15,4 +15,4 @@ ll fast_pow(ll base, ll power){
 ll sub(ll const a , ll const b){ return ((a%mod) - (b%mod) + mod) % mod; }
 ll add(ll const a, ll const b) {return ((b % mod) + (a % mod)) % mod;}
 ll mul(ll a,ll b){ return ((a%mod)*(b%mod))%mod; }
-ll divide(ll a,ll b){return mul(a,powmod(b,mod-2));}
+ll divide(ll a,ll b){return mul(a,fast_pow(b,mod-2));}
