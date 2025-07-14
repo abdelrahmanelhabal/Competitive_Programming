@@ -1,4 +1,4 @@
-int const Log = 40 , N = 3e5+5;
+int const Log = 40 , N = 1e5+5;
 int n , q  , root = 1 , parent[N] ,up[N][Log]  , depth[N];
 vector<int>adj[N] ;
 void dfs(int node , int parent) {
