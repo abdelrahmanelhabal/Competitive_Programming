@@ -1,22 +1,22 @@
 struct DSU {
-    vector<ll> parent , group ;
-    ll comp  , mx;
-    void init(ll n) {
+    vector<int> parent , group , next;
+    int comp  , mx ;
+    void init(int n) {
         comp = n ;
         mx = 1 ;
         parent.resize(n+1);
         group.resize(n+1);
-        for (ll i = 0 ; i<=n;i++) { parent[i] = i; group[i] = 1;}
+        for (int i = 0 ; i<=n;i++) { parent[i] = i; group[i] = 1}
     }
-
-    ll find(ll node) {
+    
+    int find(int node) {
         if (parent[node] == node) return node;
         return parent[node] = find(parent[node]);
     }
 
-    bool merge(ll u , ll v) {
-        ll leaderU = find(u);
-        ll leaderV = find(v);
+    bool merge(int u , int v) {
+        int leaderU = find(u);
+        int leaderV = find(v);
         if (leaderU == leaderV) {return false;}
         if (group[leaderU] > group[leaderV]) {swap(leaderU, leaderV);}
         parent[leaderU] = leaderV;
@@ -25,7 +25,7 @@ struct DSU {
         comp--;
         return true;
     }
-    ll get_size(ll node) { return group[find(node)]; }
-    ll get_max_size() {return mx;}
-    bool sameGroup(ll u , ll v){return find(u)==find(v);}
+    int get_size(int node) { return group[find(node)]; }
+    int get_max_size() {return mx;}
+    bool sameGroup(int u , int v){return find(u)==find(v);}
 };
