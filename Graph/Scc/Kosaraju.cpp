@@ -1,43 +1,60 @@
-vector<int>comp , vis , id , roots;
-vector<vector<int>>scc , dag;
-void dfs(int node , vector<vector<int>>&adj) {
-    vis[node] = 1 ;
-    for (auto child : adj[node]) {
-        if (vis[child]) continue;
-        dfs(child,adj);
+vector<int> comp, vis, ids, roots, val, inDeg, outDeg, compSz;
+vector<vector<int>> scc, dag;
+int id ;
+void dfs(int u , vector<vector<int>>& adj) {
+    vis[u] = 1;
+    for (auto v : adj[u]) {
+        if (vis[v]) continue;
+        dfs(v, adj);
     }
-    comp.emplace_back(node);
+    comp.emplace_back(u);
 }
-void Kosaraju(int  n , vector<vector<int>>&adj,vector<vector<int>>&rAdj) {
+void init(int n) {
     comp.clear();
     vis.assign(n, 0);
-    id.assign(n, -1);
+    ids.assign(n, -1);
     roots.clear();
     scc.clear();
     dag.clear();
     dag.resize(n);
-    for (int i = 0 ; i < n ; i++) {
-        if (!vis[i])dfs(i,adj);
-    }
-    auto order = comp ;
-    reverse(all(order));
-    vis.assign(n, 0);
-    for (auto node : order) {
-        if (vis[node])continue;
-        comp.clear();
-        dfs(node,rAdj);
-        scc.emplace_back(comp);
-        for (auto child : comp) {
-            id[child] = comp.front();
-        }
-        roots.emplace_back(comp.front());
+    inDeg.assign(n, 0);
+    outDeg.assign(n, 0);
+    compSz.assign(n, 0);
+    id = -1 ;
+}
+void Kosaraju(int n, vector<vector<int>>& adj, vector<vector<int>>& rAdj) {
+    init(n);
+
+    for (int i = 0; i < n; i++) {
+        if (!vis[i]) dfs(i, adj);
     }
 
-    for (int u = 0 ; u < n ; u++) {
+    auto order = comp;
+
+    reverse(all(order));
+
+    vis.assign(n, 0);
+    for (auto u : order) {
+        if (vis[u]) continue;
+        comp.clear();
+        dfs(u, rAdj);
+        id++;
+        scc.emplace_back(comp);
+        compSz[id] = comp.size();
+        for (auto v : comp) {
+            ids[v] = id;
+        }
+        roots.emplace_back(id);
+    }
+
+    for (int u = 0; u < n; u++) {
         for (auto v : adj[u]) {
-            if (id[u]!=id[v]) {
-                dag[id[u]].emplace_back(id[v]);
+            if (ids[u] != ids[v]) {
+                dag[ids[u]].emplace_back(ids[v]);
+                inDeg[ids[v]]++;
+                outDeg[ids[u]]++;
             }
         }
     }
 }
+
