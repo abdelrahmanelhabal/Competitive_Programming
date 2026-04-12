@@ -1,0 +1,79 @@
+struct HLD {
+    int N, cur=0;
+    vector<int> par, depth, head, pos, sz;
+    SegmentTree down, up;
+    HLD(vector<vector<int>>& adj, vector<int>& val)
+        : N(adj.size()), par(N), depth(N), head(N), pos(N), sz(N)
+    {
+        dfs_sz(0,0,adj);
+        dfs_hld(0,0,adj);
+        down.init(N);
+        up.init(N);
+        for (int i = 0; i < N; ++i) update_point(i, val[i]);
+    }
+    void dfs_sz(int u,int p, vector<vector<int>>& a){
+        sz[u]=1; par[u]=p; depth[u] = (u==p ? 0 : depth[p]+1);
+        for (size_t i=0;i<a[u].size();++i){
+            int v=a[u][i]; if(v==p) continue;
+            dfs_sz(v,u,a); sz[u]+=sz[v];
+            if(a[u].size() && (a[u][0]==p || sz[v] > sz[a[u][0]])) swap(a[u][i], a[u][0]);
+        }
+    }
+    void dfs_hld(int u,int h, vector<vector<int>>& a){
+        head[u]=h; pos[u]=cur++;
+        for(int v: a[u]) if(v!=par[u]) dfs_hld(v, v==a[u][0]?h:v, a);
+    }
+
+    void update_point(int u, int c){
+        down.set(pos[u], c);
+        up.set(N-1-pos[u], c);
+    }
+
+    void update_range_pos(int lpos, int rpos, int c){
+        down.update(lpos, rpos + 1 , c);
+        int L = N-1-rpos, R = N-1-lpos;
+        up.update(L, R  + 1, c);
+    }
+
+    Node query_path(int u,int v){
+        Node left, right; int x=u,y=v;
+        while(head[x] != head[y]){
+            if(depth[head[x]] > depth[head[y]]){
+                int l=N-1-pos[x], r=N-1-pos[head[x]];
+                left = up.merge(left , up.get(l,r + 1));
+                x = par[head[x]];
+            } else {
+                int l=pos[head[y]], r=pos[y];
+                right = down.merge(down.get(l,r + 1) , right);
+                y = par[head[y]];
+            }
+        }
+        if(depth[x] > depth[y]){
+            int l=N-1-pos[x], r=N-1-pos[y];
+            left = up.merge(left , up.get(l,r + 1));
+        } else {
+            int l=pos[x], r=pos[y];
+            right = down.merge(down.get(l,r + 1) , right);
+        }
+        return down.merge(left , right);
+    }
+    void update_path(int u, int v, int c) {
+        int x = u, y = v;
+        while (head[x] != head[y]) {
+            if (depth[head[x]] > depth[head[y]]) {
+                int l = pos[head[x]];
+                int r = pos[x];
+                update_range_pos(l, r , c);
+                x = par[head[x]];
+            } else {
+                int l = pos[head[y]];
+                int r = pos[y];
+                update_range_pos(l, r , c);
+                y = par[head[y]];
+            }
+        }
+        int l = min(pos[x], pos[y]);
+        int r = max(pos[x], pos[y]);
+        update_range_pos(l, r , c);
+    }
+};
