@@ -1,22 +1,23 @@
+int const N = 2e5+5;
 int n ;
 vector<int> vis, low , depth ;
-vector<vector<int>>adj;
+vector<int>adj[N];
 vector<pair<int,int>>bridge;
-void dfs(int node , int parent) {
-    vis[node] = 1 ;
-    low[node] = depth[node];
-    for (auto child : adj[node]) {
-        if (child == parent)continue;
-        if (vis[child]) { // back-edge
-            low[node] = min(low[node],depth[child]);
+void dfs(int u , int par) {
+    vis[u] = 1 ;
+    low[u] = depth[u];
+    for (auto v : adj[u]) {
+        if (v == par)continue;
+        if (vis[v]) { // back-edge
+            low[u] = min(low[u],depth[v]);
             continue;
         }
-        depth[child] = depth[node] + 1;
-        dfs(child,node);
-        low[node] = min(low[node],low[child]);
+        depth[v] = depth[u] + 1;
+        dfs(v,u);
+        low[u] = min(low[u],low[v]);
 
-        if (low[child] > depth[node]) {
-            bridge.emplace_back(node, child);
+        if (low[v] > depth[u]) {
+            bridge.emplace_back(u, v);
         }
     }
 }

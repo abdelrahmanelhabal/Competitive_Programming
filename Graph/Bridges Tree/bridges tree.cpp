@@ -1,31 +1,32 @@
+int const N = 2e5 + 5 ; 
 int n , m  , cur_id = 0   ;
 vector<int> vis, low , depth , is_bridge , id , siz ;
-vector<vector<pair<int,int>>>adj;
+vector<pair<int,int>>adj[N];
 vector<vector<int>>tree;
-void dfs(int node , int parent) {
-    vis[node] = 1 ;
-    low[node] = depth[node];
-    for (auto [child , idx]  : adj[node]) {
-        if (child == parent)continue;
-        if (vis[child]) { // back-edge
-            low[node] = min(low[node],depth[child]);
+void dfs(int u , int par) {
+    vis[u] = 1 ;
+    low[u] = depth[u];
+    for (auto [v , idx]  : adj[u]) {
+        if (v == par)continue;
+        if (vis[v]) { // back-edge
+            low[u] = min(low[u],depth[v]);
             continue;
         }
-        depth[child] = depth[node] + 1;
-        dfs(child,node);
-        low[node] = min(low[node],low[child]);
-
-        if (low[child] > depth[node]) {
+        depth[v] = depth[u] + 1;
+        dfs(v,u);
+        low[u] = min(low[u],low[v]);
+ 
+        if (low[v] > depth[u]) {
             is_bridge[idx] = 1;
         }
     }
 }
-void dfs_tree(int node) {
-    id[node] = cur_id ;
+void dfs_tree(int u) {
+    id[u] = cur_id ;
     siz[cur_id]++;
-    for (auto [child , idx] : adj[node]) {
-        if (id[child] != -1 || is_bridge[idx]) {continue;}
-        dfs_tree(child);
+    for (auto [v , idx] : adj[u]) {
+        if (id[v] != -1 || is_bridge[idx]) {continue;}
+        dfs_tree(v);
     }
 }
 void get_bridge_tree() {
@@ -37,9 +38,9 @@ void get_bridge_tree() {
     siz.assign(n,0);
     id.assign(n,-1);
     tree.assign(n,vector<int>());
-
+ 
     dfs(0,-1); 
-
+ 
     for (int i = 0 ; i < n ; i++) {
         if (id[i]==-1) {
             dfs_tree(i);
@@ -50,7 +51,6 @@ void get_bridge_tree() {
         for (auto [v,idx] : adj[u]) {
             if (id[u]!=id[v]) {
                 tree[id[v]].emplace_back(id[u]);
-                tree[id[u]].emplace_back(id[v]);
             }
         }
     }
