@@ -115,4 +115,4 @@ struct DSU {
         cnt++, sz[a] -= sz[b], far[a] = {x1, x2}, p[b] = b;
         diam = old_diam ; 
     }
-};
+};w
