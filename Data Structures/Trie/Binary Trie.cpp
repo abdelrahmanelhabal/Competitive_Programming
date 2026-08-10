@@ -10,8 +10,18 @@ struct node {
 struct trie {
     node*root = new node();
 
+    ~trie() { freeNode(root); }
+    void freeNode(node* cur) {
+        if (!cur) return;
+        freeNode(cur->ch[0]);
+        freeNode(cur->ch[1]);
+        delete cur;
+    }
+
+
     void insert(int n) const  {
         node*cur = root;
+        root->cnt++;
         for (int i = 30 ; i >= 0 ; i--) {
             int idx =  (n >> i) & 1 ;
             if (cur->ch[idx] == nullptr ) {
@@ -22,6 +32,7 @@ struct trie {
             cur->cnt++;
         }
     }
+
     void erase(int n , int bit , node*cur) const {
         if (bit == -1)return;
         int idx = (n >> bit) & 1 ;
@@ -34,6 +45,12 @@ struct trie {
             cur->ch[idx] = nullptr;
         }
     }
+
+    void erase(int n) const {
+        root->cnt--;
+        erase(n, 30, root);
+    }
+
     int max_xor(int n) const {
         node*cur = root;
         int res = 0 ;
@@ -78,7 +95,22 @@ struct trie {
         }
         return ans;
     }
-    
+
+    ll query(int n, int x) const { // number of values  val ^ x > k
+        node* cur = root;
+        ll ans = 0;
+        for (int i = 30; i >= 0 && cur; i--) {
+            int a = (n >> i) & 1;
+            int b = (x >> i) & 1;
+            if (b == 0) {
+                if (cur->ch[a^1]) ans += cur->ch[a^1]->cnt;
+                cur = cur->ch[a];
+            } else {
+                cur = cur->ch[a^1];
+            }
+        }
+        return ans;
+    }
     
     int mex_with_x(int x){
         node* cur = root;
